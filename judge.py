@@ -47,7 +47,6 @@ def analyze_posture(base64_image):
                     {
                         "type": "image_url",
                         "image_url": f"data:image/jpeg;base64,{base64_image}",
-                        # "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
                     },
                 ],
             }
