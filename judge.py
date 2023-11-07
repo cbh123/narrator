@@ -4,12 +4,22 @@ import base64
 import json
 import time
 import simpleaudio as sa
+import errno
 
 client = OpenAI()
 
+
 def encode_image(image_path):
-    with open(image_path, "rb") as image_file:
-        return base64.b64encode(image_file.read()).decode('utf-8')
+    while True:
+        try:
+            with open(image_path, "rb") as image_file:
+                return base64.b64encode(image_file.read()).decode('utf-8')
+        except IOError as e:
+            if e.errno != errno.EACCES:
+                # Not a "file in use" error, re-raise
+                raise
+            # File is being written to, wait a bit and retry
+            time.sleep(0.1)
 
 
 def play_audio(file_path):
@@ -37,6 +47,7 @@ def analyze_posture(base64_image):
                     {
                         "type": "image_url",
                         "image_url": f"data:image/jpeg;base64,{base64_image}",
+                        # "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
                     },
                 ],
             }
