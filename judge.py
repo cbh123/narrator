@@ -73,7 +73,6 @@ def summarize_analysis(analysis):
 
 def main():
     while True:
-        print("🧘 Judging posture...")
 
         # path to your image
         image_path = os.path.join(os.getcwd(), "./frames/frame.jpg")
@@ -82,9 +81,11 @@ def main():
         base64_image = encode_image(image_path)
 
         # analyze posture
+        print("🧘 Looking at your posture...")
         analysis = analyze_posture(base64_image)
 
         # summarize analysis
+        print("🧘 Judging your posture...")
         result = summarize_analysis(analysis)
         result_json = json.loads(result)
 
