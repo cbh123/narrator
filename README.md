@@ -20,7 +20,8 @@ Make a [Replicate](https://replicate.com) and ElevenLabs (https://elevenlabs.io)
 
 ```
 export REPLICATE_API_TOKEN=<token>
-export ELEVENLABS_API_TOKEN=<eleven-token>
+export ELEVEN_API_KEY=<eleven-token>
+export OPENAI_API_KEY=<openai-api-key>
 ```
 
 Make a new voice in Eleven and get the voice id of that voice using their [get voices](https://elevenlabs.io/docs/api-reference/voices) API.
