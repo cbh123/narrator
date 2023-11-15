@@ -2,9 +2,14 @@ import cv2
 import time
 from PIL import Image
 import numpy as np
+import os
 
 # Folder
 folder = "frames"
+
+# Create the frames folder if it doesn't exist
+frames_dir = os.path.join(os.getcwd(), folder)
+os.makedirs(frames_dir, exist_ok=True)
 
 # Initialize the webcam
 cap = cv2.VideoCapture(0)
