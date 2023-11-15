@@ -16,11 +16,11 @@ source venv/bin/activate
 Then, install the dependencies:
 `pip install -r requirements.txt`
 
-Make a [Replicate](https://replicate.com) and ElevenLabs (https://elevenlabs.io) account and set your tokens:
+Make an OpenAI and ElevenLabs (https://elevenlabs.io) account and set your tokens:
 
 ```
-export REPLICATE_API_TOKEN=<token>
-export ELEVENLABS_API_TOKEN=<eleven-token>
+export OPENAI_API_KEY=<token>
+export ELEVENLABS_API_KEY=<eleven-token>
 ```
 
 Make a new voice in Eleven and get the voice id of that voice using their [get voices](https://elevenlabs.io/docs/api-reference/voices) API.
