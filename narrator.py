@@ -5,7 +5,11 @@ import json
 import time
 import simpleaudio as sa
 import errno
-from elevenlabs import generate, play, voices
+from elevenlabs import generate, play, voices, set_api_key
+
+#Enter your Eleven labs API key
+set_api_key("")
+
 
 client = OpenAI()
 
