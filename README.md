@@ -18,7 +18,7 @@ source venv/bin/activate
 Then, install the dependencies:
 `pip install -r requirements.txt`
 
-Make a [Replicate](https://replicate.com), OpenAI, and [ElevenLabs](https://elevenlabs.io) account and set your tokens:
+Make a [Replicate](https://replicate.com), [OpenAI](https://beta.openai.com/), and [ElevenLabs](https://elevenlabs.io) account and set your tokens:
 
 ```
 export OPENAI_API_KEY=<token>
