@@ -1,5 +1,9 @@
-# narrator
+# sarcastic narrator
+Sarcastic David Attenborough narrates what you are doing based on your screen
 
+
+Forked from this project:
+https://github.com/cbh123/narrator
 David Attenborough narrates your life.
 https://twitter.com/charliebholtz/status/1724815159590293764
 

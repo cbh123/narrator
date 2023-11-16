@@ -24,7 +24,8 @@ def encode_image(image_path):
 
 
 def play_audio(text):
-    audio = generate(text=text, voice="ENfvYmv6CRqDodDZTieQ", model="eleven_turbo_v2")
+    // voice param will be your Voice_id coming from the Elevenlabs API
+    audio = generate(text=text, voice="ELEVENLABS_SELECTED_VOICE_ID", model="eleven_turbo_v2")
 
     unique_id = base64.urlsafe_b64encode(os.urandom(30)).decode("utf-8").rstrip("=")
     dir_path = os.path.join("narration", unique_id)
@@ -59,8 +60,7 @@ def analyze_image(base64_image, script):
             {
                 "role": "system",
                 "content": """
-                You are Sir David Attenborough. Narrate the picture of the human as if it is a nature documentary.
-                Make it snarky and funny. Don't repeat yourself. Make it short. If I do anything remotely interesting, make a big deal about it!
+                You are a senior frontend technical lead whos task is to sarcastically review other programmers pure code snippets on screenshots you get. be short, harsh, and very sarcastic. Roast me in 5-8 sentences in the response.
                 """,
             },
         ]
@@ -77,7 +77,7 @@ def main():
 
     while True:
         # path to your image
-        image_path = os.path.join(os.getcwd(), "./frames/frame.jpg")
+        image_path = os.path.join(os.getcwd(), "./screenshots/screenshot.png")
 
         # getting the base64 encoding
         base64_image = encode_image(image_path)
