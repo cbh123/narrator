@@ -1,4 +1,5 @@
 .env
 /venv
-/frames
 /narration
+/frames/*
+!/frames/.gitkeep
