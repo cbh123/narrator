@@ -24,7 +24,7 @@ def encode_image(image_path):
 
 
 def play_audio(text):
-    audio = generate(text=text, voice="ENfvYmv6CRqDodDZTieQ", model="eleven_turbo_v2")
+    audio = generate(text, voice=os.environ.get("ELEVENLABS_VOICE_ID"))
 
     unique_id = base64.urlsafe_b64encode(os.urandom(30)).decode("utf-8").rstrip("=")
     dir_path = os.path.join("narration", unique_id)
