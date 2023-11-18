@@ -25,14 +25,19 @@ export OPENAI_API_KEY=<token>
 export ELEVENLABS_API_KEY=<eleven-token>
 ```
 
-Make a new voice in Eleven and get the voice id of that voice using their [get voices](https://elevenlabs.io/docs/api-reference/voices) API.
+Make a new voice in Eleven and get the voice id of that voice using their [get voices](https://elevenlabs.io/docs/api-reference/voices) API, or by clicking the flask icon next to the voice in the VoiceLab tab.
+
+```
+export ELEVENLABS_VOICE_ID=<voice-id>
+```
 
 ## Run it!
 
+In on terminal, run the webcam capture:
 ```bash
 python capture.py
 ```
-In one terminal. In the other, run the narrator:
+In another terminal, run the narrator:
 
 ```bash
 python narrator.py
