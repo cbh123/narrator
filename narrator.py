@@ -54,22 +54,27 @@ def generate_new_line(base64_image):
 
 
 def analyze_image(base64_image, script):
-    response = client.chat.completions.create(
-        model="gpt-4-vision-preview",
-        messages=[
-            {
-                "role": "system",
-                "content": """
-                You are Sir David Attenborough. Narrate the picture of the human as if it is a nature documentary.
-                Make it snarky and funny. Don't repeat yourself. Make it short. If I do anything remotely interesting, make a big deal about it!
-                """,
-            },
-        ]
-        + script
-        + generate_new_line(base64_image),
-        max_tokens=500,
-    )
-    response_text = response.choices[0].message.content
+    while True:
+        response = client.chat.completions.create(
+            model="gpt-4-vision-preview",
+            messages=[
+                {
+                    "role": "system",
+                    "content": """
+                    You are Sir David Attenborough. Narrate the picture of the human as if it is a nature documentary.
+                    Make it snarky and funny. Don't repeat yourself. Make it short. Max two sentence. If I do anything remotely interesting, make a big deal about it!
+                    """,
+                },
+            ]
+            + script
+            + generate_new_line(base64_image),
+            max_tokens=200,
+        )
+        response_text = response.choices[0].message.content
+
+        if not response_text.startswith("I'm sorry"):
+            break
+
     return response_text
 
 
