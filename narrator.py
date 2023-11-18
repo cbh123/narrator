@@ -6,6 +6,14 @@ import time
 import simpleaudio as sa
 import errno
 from elevenlabs import generate, play, set_api_key, voices
+from dotenv import load_dotenv
+
+# import environment from dotenv file (.env)
+# .env file should have API keys as follows
+# OPENAI_API_KEY=<YOUR-API-KEY>
+# ELEVENLABS_API_KEY=<YOUR-API-KEY>
+# ELEVENLABS_VOICE_ID=<YOUR-VOICE-ID>
+load_dotenv()
 
 client = OpenAI()
 
@@ -46,7 +54,7 @@ def generate_new_line(base64_image):
                 {"type": "text", "text": "Describe this image"},
                 {
                     "type": "image_url",
-                    "image_url": f"data:image/jpeg;base64,{base64_image}",
+                    "image_url": f"data:image/jpeg;base64,{base64_image}"
                 },
             ],
         },
