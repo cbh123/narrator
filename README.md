@@ -5,11 +5,11 @@ Thank you Charlie for this simple but very fun iteration using OpenAi and Elevel
 
 Essendo un repository indirizzato esclusivamente all'utenza italiana ho deciso di tradurre le istruzioni.
 
-[!NOTE]
-Per poter usare questo repository dovrai creare una nuova voce narrante su Elevenlabs utilizzando un campione della voce di Piero Angela o del narratore che preferisci. Per comodità ho aggiunto un sample da usare per fare il training nella cartella `assets`
+>[!NOTE]
+>Per poter usare questo repository dovrai creare una nuova voce narrante su Elevenlabs utilizzando un campione della voce di Piero Angela o del narratore che preferisci. Per comodità ho aggiunto un sample da usare per fare il training nella cartella `assets`
 
-[!NOTE]
-Non possiedo i diritti di utilizzo della voce di Piero, quindi questo progetto ha esclusivamente scopi divulgativi. Per me è stato un modo per far rivivere una voce amica che ha accompagnato i weekend della mia infanzia con SuperQuark. A lui devo in parte la passione per le scienze e per la cultura. 
+>[!NOTE]
+>Non possiedo i diritti di utilizzo della voce di Piero, quindi questo progetto ha esclusivamente scopi divulgativi. Per me è stato un modo per far rivivere una voce amica che ha accompagnato i weekend della mia infanzia con SuperQuark. A lui devo in parte la passione per le scienze e per la cultura. 
 
 ## Setup
 
