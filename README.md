@@ -9,7 +9,7 @@ Essendo un repository indirizzato esclusivamente all'utenza italiana ho deciso d
 >Per poter usare questo repository dovrai creare una nuova voce narrante su Elevenlabs utilizzando un campione della voce di Piero Angela o del narratore che preferisci. Per comodità ho aggiunto un sample da usare per fare il training nella cartella `assets`
 
 >[!NOTE]
->Non possiedo i diritti di utilizzo della voce di Piero, quindi questo progetto ha esclusivamente scopi divulgativi. Per me è stato un modo per far rivivere una voce amica che ha accompagnato i weekend della mia infanzia con SuperQuark. A lui devo in parte la passione per le scienze e per la cultura. 
+>Non possiedo i diritti di utilizzo della voce di Piero, l'utilizzo di questo repository deve essere inteso esclusivamente per scopi divulgativi. Per me è stato un modo per far rivivere la voce amica che accompagnava i weekend della mia infanzia con SuperQuark. A Piero Angela devo in parte la passione per le scienze e per la cultura. 
 
 ## Setup
 
