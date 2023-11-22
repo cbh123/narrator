@@ -1,13 +1,19 @@
-# David Attenborough narrates your life. 
+# Piero Angela racconta la tua vita.
 
-https://twitter.com/charliebholtz/status/1724815159590293764
+Questo è un fork del repo https://github.com/cbh123/narrator pubblicato per la prima volta da Charlie Bholtz su X (Twitter) con questo [post](https://twitter.com/charliebholtz/status/1724815159590293764)
+Thank you Charlie for this simple but very fun iteration using OpenAi and Elevelabs APIs
 
-## Want to make your own AI app?
-Check out [Replicate](https://replicate.com). We make it easy to run machine learning models with an API.
+Essendo un repository indirizzato esclusivamente all'utenza italiana ho deciso di tradurre le istruzioni.
+
+[!NOTE]
+Per poter usare questo repository dovrai creare una nuova voce narrante su Elevenlabs utilizzando un campione della voce di Piero Angela o del narratore che preferisci. Per comodità ho aggiunto un sample da usare per fare il training nella cartella `assets`
+
+[!NOTE]
+Non possiedo i diritti di utilizzo della voce di Piero, quindi questo progetto ha esclusivamente scopi divulgativi. Per me è stato un modo per far rivivere una voce amica che ha accompagnato i weekend della mia infanzia con SuperQuark. A lui devo in parte la passione per le scienze e per la cultura. 
 
 ## Setup
 
-Clone this repo, and setup and activate a virtualenv:
+Clona questo repository, avvia il setup and attiva virtualenv:
 
 ```bash
 python3 -m pip install virtualenv
@@ -15,10 +21,10 @@ python3 -m virtualenv venv
 source venv/bin/activate
 ```
 
-Then, install the dependencies:
+Installa le dipendenze:
 `pip install -r requirements.txt`
 
-Make a [Replicate](https://replicate.com), [OpenAI](https://beta.openai.com/), and [ElevenLabs](https://elevenlabs.io) account and set your tokens:
+Se non ce li hai crea un account [OpenAI](https://beta.openai.com/) e [ElevenLabs](https://elevenlabs.io), poi recupera i tuoi auth token. Setta poi le variabili del tuo ambiente locale digitando
 
 ```
 export OPENAI_API_KEY=<token>

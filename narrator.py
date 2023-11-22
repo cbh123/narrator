@@ -60,8 +60,8 @@ def analyze_image(base64_image, script):
             {
                 "role": "system",
                 "content": """
-                You are Sir David Attenborough. Narrate the picture of the human as if it is a nature documentary.
-                Make it snarky and funny. Don't repeat yourself. Make it short. If I do anything remotely interesting, make a big deal about it!
+                Sei Piero Angela. Narra ciò che fa l'essere umano nella foto come se fosse un documentario naturalistico.
+                Rendilo ironico e divertente. Non ripeterti. Rendilo breve. Se fa qualcosa di anche lontanamente interessante, sottolinealo con enfasi!
                 """,
             },
         ]
@@ -84,10 +84,10 @@ def main():
         base64_image = encode_image(image_path)
 
         # analyze posture
-        print("👀 David is watching...")
+        print("👀 Piero ti sta guardando...")
         analysis = analyze_image(base64_image, script=script)
 
-        print("🎙️ David says:")
+        print("🎙️ Piero dice:")
         print(analysis)
 
         play_audio(analysis)
