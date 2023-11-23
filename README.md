@@ -31,6 +31,13 @@ Make a new voice in Eleven and get the voice id of that voice using their [get v
 export ELEVENLABS_VOICE_ID=<voice-id>
 ```
 
+### Setup Script
+
+Alternatively, one can use the `setup.sh` script to facilitate getting the shell envs ready to rock by updating the API key values in `setup.sh` and run. 
+
+_Note: may have to manually run `source source venv/bin/activate` afterwards depending on shell env._
+
+
 ## Run it!
 
 In on terminal, run the webcam capture:
