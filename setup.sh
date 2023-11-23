@@ -14,3 +14,5 @@ pip install -r requirements.txt
 export ELEVENLABS_VOICE_ID=
 export OPENAI_API_KEY=
 export ELEVENLABS_API_KEY=
+
+export ELEVENLABS_STREAMING=false

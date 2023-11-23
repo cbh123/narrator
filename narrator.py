@@ -1,15 +1,23 @@
-import os
-from openai import OpenAI
 import base64
-import json
-import time
-import simpleaudio as sa
 import errno
-from elevenlabs import generate, play, set_api_key, voices
+import json
+import os
+import time
+
+import simpleaudio as sa
+from elevenlabs import generate, play, set_api_key, stream, voices
+from openai import OpenAI
 
 client = OpenAI()
 
 set_api_key(os.environ.get("ELEVENLABS_API_KEY"))
+
+
+# This code initializes the variable 'isStreaming' based on the value of the environment variable 'ELEVENLABS_STREAMIMAGES'.
+# If the value of 'ELEVENLABS_STREAMIMAGES' is "true", then 'isStreaming' is set to True.
+# Otherwise, 'isStreaming' is set to False.
+isStreaming = os.environ.get("ELEVENLABS_STREAMING", "false") == "true"
+
 
 def encode_image(image_path):
     while True:
@@ -25,7 +33,16 @@ def encode_image(image_path):
 
 
 def play_audio(text):
-    audio = generate(text, voice=os.environ.get("ELEVENLABS_VOICE_ID"))
+    audio = generate(
+        text,
+        voice=os.environ.get("ELEVENLABS_VOICE_ID"),
+        model="eleven_turbo_v2",
+        stream=isStreaming,
+    )
+
+    if isStreaming:
+        stream(audio)
+        return
 
     unique_id = base64.urlsafe_b64encode(os.urandom(30)).decode("utf-8").rstrip("=")
     dir_path = os.path.join("narration", unique_id)
@@ -43,7 +60,10 @@ def generate_new_line(base64_image):
         {
             "role": "user",
             "content": [
-                {"type": "text", "text": "Describe this image as if you are David Attenborough"},
+                {
+                    "type": "text",
+                    "text": "Describe this image as if you are David Attenborough",
+                },
                 {
                     "type": "image_url",
                     "image_url": f"data:image/jpeg;base64,{base64_image}",
