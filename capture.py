@@ -37,13 +37,13 @@ while True:
         frame = cv2.cvtColor(np.array(resized_img), cv2.COLOR_RGB2BGR)
 
         # Save the frame as an image file
-        print("📸 Say cheese! Saving frame.")
+        print("📸 Sorridi! Ti sto riprendendo.")
         path = f"{folder}/frame.jpg"
 
         # Showing captured frame
         cv2.imshow("image", frame)
         # Keeps window open till the next cycle runs
-        cv2.waitKey(4900)
+        cv2.waitKey(1900)
 
         # Writing frame on disk
         cv2.imwrite(path, frame)
@@ -51,7 +51,7 @@ while True:
         print("Failed to capture image")
 
     # Wait for 2 seconds
-    time.sleep(2)
+    # time.sleep(2)
 
 # Release the camera and close all windows
 cap.release()

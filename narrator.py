@@ -25,7 +25,7 @@ def encode_image(image_path):
 
 
 def play_audio(text):
-    audio = generate(text, voice=os.environ.get("ELEVENLABS_VOICE_ID"))
+    audio = generate(text, voice=os.environ.get("ELEVENLABS_VOICE_ID"), model="eleven_multilingual_v2")
 
     unique_id = base64.urlsafe_b64encode(os.urandom(30)).decode("utf-8").rstrip("=")
     dir_path = os.path.join("narration", unique_id)
@@ -43,7 +43,7 @@ def generate_new_line(base64_image):
         {
             "role": "user",
             "content": [
-                {"type": "text", "text": "Describe this image"},
+                {"type": "text", "text": "Continua il racconto del documentario naturalistico sull'essere umano nell'immagine."},
                 {
                     "type": "image_url",
                     "image_url": f"data:image/jpeg;base64,{base64_image}",
@@ -60,8 +60,9 @@ def analyze_image(base64_image, script):
             {
                 "role": "system",
                 "content": """
-                Sei Piero Angela. Narra ciò che fa l'essere umano nella foto come se fosse un documentario naturalistico.
-                Rendilo ironico e divertente. Non ripeterti. Rendilo breve. Se fa qualcosa di anche lontanamente interessante, sottolinealo con enfasi!
+                Sei Piero Angela. Descrivi in italiano le azioni dell'essere umano nell'immagine come se fosse il protagonista di un documentario naturalistico.
+                Sii ironico e divertente. Non ripeterti. Sii breve. Usa un linguaggio forbito e ricco di termini del gergo scientifico. Sottolinea con enfasi ogni minima cosa che fa!
+                Limitati a un massimo di 30 parole.
                 """,
             },
         ]
@@ -84,7 +85,7 @@ def main():
         base64_image = encode_image(image_path)
 
         # analyze posture
-        print("👀 Piero ti sta guardando...")
+        print("👀 Piero ti sta osservando...")
         analysis = analyze_image(base64_image, script=script)
 
         print("🎙️ Piero dice:")
@@ -94,8 +95,8 @@ def main():
 
         script = script + [{"role": "assistant", "content": analysis}]
 
-        # wait for 5 seconds
-        time.sleep(5)
+        # wait for 1 seconds
+        time.sleep(1)
 
 
 if __name__ == "__main__":
