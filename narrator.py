@@ -25,25 +25,6 @@ script = []
 narrator = "Sir David Attenborough"
 
 
-def on_press(key):
-    if key == keyboard.Key.space:
-        # When space bar is pressed, run the main function which analyzes the image and generates the audio
-        _main()
-
-
-def on_release(key):
-    if key == keyboard.Key.esc:
-        # Stop listener
-        return False
-
-
-# Create a listener
-listener = keyboard.Listener(on_press=on_press, on_release=on_release)
-
-# Start the listener
-listener.start()
-
-
 def encode_image(image_path):
     while True:
         try:
@@ -151,6 +132,24 @@ def main():
             # wait for 5 seconds
             time.sleep(5)
 
+
+def on_press(key):
+    if key == keyboard.Key.space:
+        # When space bar is pressed, run the main function which analyzes the image and generates the audio
+        _main()
+
+
+def on_release(key):
+    if key == keyboard.Key.esc:
+        # Stop listener
+        return False
+
+
+# Create a listener
+listener = keyboard.Listener(on_press=on_press, on_release=on_release)
+
+# Start the listener
+listener.start()
 
 if isPhotoBooth:
     print(f"Press the spacebar to trigger {narrator}")
