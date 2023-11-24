@@ -1,6 +1,7 @@
 import base64
 import errno
 import os
+import shutil
 import time
 
 from dotenv import load_dotenv
@@ -63,9 +64,8 @@ def play_audio(text):
     # Copy the image analyzed to the same directory as the audio file
     image_path = os.path.join(os.getcwd(), "./frames/frame.jpg")
     new_image_path = os.path.join(dir_path, "image.jpg")
-    os.system(f"cp {image_path} {new_image_path}")
+    shutil.copy(image_path, new_image_path)
 
-    # Play the audio
     play(audio)
 
 
