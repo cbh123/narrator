@@ -62,7 +62,7 @@ One can set the environment variables via the `.env` file, which is read every t
 
 ### Streaming
 
-If you would like the speech to start quicker via a streaming manner set the environment variable to enable. The concession is that the audio snippet is not saved in the `/narration` directory.
+If you would like the speech to start quicker via a streaming manner set the environment variable to enable. The concession is that the audio and corresponding image is not saved in the `/narration` directory.
 
 ```bash
 export ELEVENLABS_STREAMING=true
