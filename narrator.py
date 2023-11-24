@@ -7,10 +7,34 @@ import time
 import simpleaudio as sa
 from elevenlabs import generate, play, set_api_key, stream, voices
 from openai import OpenAI
+from pynput import keyboard
 
 client = OpenAI()
 
 set_api_key(os.environ.get("ELEVENLABS_API_KEY"))
+
+script = []
+
+
+def on_press(key):
+    print(f"Key {key} pressed.")
+    if key == keyboard.Key.space:
+        _main()
+
+
+def on_release(key):
+    print(f"Key {key} released.")
+
+    if key == keyboard.Key.esc:
+        # Stop listener
+        return False
+
+
+# Create a listener
+listener = keyboard.Listener(on_press=on_press, on_release=on_release)
+
+# Start the listener
+listener.start()
 
 
 # This code initializes the variable 'isStreaming' based on the value of the environment variable 'ELEVENLABS_STREAMIMAGES'.
@@ -93,29 +117,50 @@ def analyze_image(base64_image, script):
     return response_text
 
 
+def _main():
+    global script
+    # path to your image
+    image_path = os.path.join(os.getcwd(), "./frames/frame.jpg")
+
+    # getting the base64 encoding
+    base64_image = encode_image(image_path)
+
+    # analyze posture
+    print("👀 David is watching...")
+    analysis = analyze_image(base64_image, script=script)
+
+    print("🎙️ David says:")
+    print(analysis)
+
+    play_audio(analysis)
+
+    script = script + [{"role": "assistant", "content": analysis}]
+
+
 def main():
-    script = []
+    # script = []
 
     while True:
+        pass
         # path to your image
-        image_path = os.path.join(os.getcwd(), "./frames/frame.jpg")
+        # image_path = os.path.join(os.getcwd(), "./frames/frame.jpg")
 
-        # getting the base64 encoding
-        base64_image = encode_image(image_path)
+        # # getting the base64 encoding
+        # base64_image = encode_image(image_path)
 
-        # analyze posture
-        print("👀 David is watching...")
-        analysis = analyze_image(base64_image, script=script)
+        # # analyze posture
+        # print("👀 David is watching...")
+        # analysis = analyze_image(base64_image, script=script)
 
-        print("🎙️ David says:")
-        print(analysis)
+        # print("🎙️ David says:")
+        # print(analysis)
 
-        play_audio(analysis)
+        # play_audio(analysis)
 
-        script = script + [{"role": "assistant", "content": analysis}]
+        # script = script + [{"role": "assistant", "content": analysis}]
 
-        # wait for 5 seconds
-        time.sleep(5)
+        # # wait for 5 seconds
+        # time.sleep(5)
 
 
 if __name__ == "__main__":
