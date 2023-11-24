@@ -28,6 +28,7 @@ pure-eval==0.2.2
 pydantic==2.4.2
 pydantic_core==2.10.1
 Pygments==2.16.1
+pynput==1.7.6
 requests==2.31.0
 simpleaudio==1.0.4
 six==1.16.0

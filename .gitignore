@@ -3,4 +3,4 @@
 /narration
 /frames/*
 !/frames/.gitkeep
-.env
+.trunk
