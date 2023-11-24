@@ -54,7 +54,7 @@ python narrator.py
 
 Alternative to running the [Setup](#setup) commands above individually, one can use the `setup.sh` script to facilitate getting the two required shell envs ready to rock.
 
-_Note: may have to manually run `source source venv/bin/activate` afterwards depending on shell env._
+_Note: will have to run `source source venv/bin/activate` afterwards to activate the virtual env._
 
 #### Dotenv
 
