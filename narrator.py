@@ -3,11 +3,15 @@ import errno
 import os
 import time
 
+from dotenv import load_dotenv
 from elevenlabs import generate, play, set_api_key, stream
 from openai import OpenAI
 from pynput import (  # Using pynput to listen for a keypress instead of native keyboard module which was requiring admin privileges
     keyboard,
 )
+
+# import environment variables from .env file
+load_dotenv()
 
 client = OpenAI()
 
