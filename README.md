@@ -1,4 +1,4 @@
-# David Attenborough narrates your life.
+# David Attenborough narrates your life
 
 https://twitter.com/charliebholtz/status/1724815159590293764
 
@@ -32,12 +32,6 @@ Make a new voice in Eleven and get the voice id of that voice using their [get v
 export ELEVENLABS_VOICE_ID=<voice-id>
 ```
 
-### Script
-
-Alternative to running the commands above individually, one can use the `setup.sh` script to facilitate getting the two required shell envs ready to rock by updating the environment variable values in `setup.sh` and executing the script.
-
-_Note: may have to manually run `source source venv/bin/activate` afterwards depending on shell env._
-
 ## Run it!
 
 In on terminal, run the webcam capture:
@@ -53,6 +47,18 @@ python narrator.py
 ```
 
 ## Options
+
+### Setup
+
+#### Script
+
+Alternative to running the [Setup](#setup) commands above individually, one can use the `setup.sh` script to facilitate getting the two required shell envs ready to rock.
+
+_Note: may have to manually run `source source venv/bin/activate` afterwards depending on shell env._
+
+#### Dotenv
+
+One can set the environment variables via the `.env` file, which is read every time the process starts. It is recommended to copy the `.env.example` file and rename to `.env`.
 
 ### Streaming
 
