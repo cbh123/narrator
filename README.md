@@ -32,14 +32,6 @@ Make a new voice in Eleven and get the voice id of that voice using their [get v
 export ELEVENLABS_VOICE_ID=<voice-id>
 ```
 
-### Streaming
-
-If you would like the speech to start quicker via a streaming manner set the environment variable to enable. The concession is that the audio snippet is not saved in the `/narration` directory.
-
-```bash
-export ELEVENLABS_STREAMING=true
-```
-
 ### Script
 
 Alternative to running the commands above individually, one can use the `setup.sh` script to facilitate getting the two required shell envs ready to rock by updating the environment variable values in `setup.sh` and executing the script.
@@ -58,4 +50,22 @@ In another terminal, run the narrator:
 
 ```bash
 python narrator.py
+```
+
+## Options
+
+### Streaming
+
+If you would like the speech to start quicker via a streaming manner set the environment variable to enable. The concession is that the audio snippet is not saved in the `/narration` directory.
+
+```bash
+export ELEVENLABS_STREAMING=true
+```
+
+### PhotoBooth
+
+The default behavior of this app will continually analyze images. If you would like to use in a mode more similar to a photo booth, set the environment variable. In this mode, the image will only be analyzed when the spacebar key is pressed.
+
+```bash
+export PHOTOBOOTH_MODE=true
 ```
