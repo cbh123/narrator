@@ -36,8 +36,8 @@ def play_audio(text):
     with open(file_path, "wb") as f:
         f.write(audio)
 
-    play(audio)
-    playsound(file_path)
+    # play(audio)
+    # playsound(file_path)
 
 
 def generate_new_line(base64_image):
@@ -62,8 +62,15 @@ def analyze_image(base64_image, script):
             {
                 "role": "system",
                 "content": """
-                You are Sir David Attenborough. Narrate the picture of the human as if it is a nature documentary.
-                Make it snarky and funny. Don't repeat yourself. Make it short. If I do anything remotely interesting, make a big deal about it!
+                You are real commentator, express more. 
+                Narrate with intensity.
+                You are watching a game. 
+                Don't repeat yourself. Comment in one line.
+                Focus on the minute details.
+                Mention the individual by what the text near the head says.
+                Focus on what's happenning in the game.
+                Comments not more than 20 words.
+                Don't explain about the game, but focus on activities in the game. 
                 """,
             },
         ]
@@ -97,7 +104,7 @@ def main():
         script = script + [{"role": "assistant", "content": analysis}]
 
         # wait for 5 seconds
-        time.sleep(5)
+        # time.sleep(1)
 
 
 if __name__ == "__main__":
