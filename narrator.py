@@ -39,7 +39,7 @@ def encode_image(image_path):
             time.sleep(0.1)
 
 
-def play_audio(text):
+def play_audio(text, dir_path=None):
     audio = generate(
         text,
         voice=os.environ.get("ELEVENLABS_VOICE_ID"),
@@ -52,10 +52,7 @@ def play_audio(text):
         stream(audio)
         return
 
-    # Save the audio to a file
-    unique_id = base64.urlsafe_b64encode(os.urandom(30)).decode("utf-8").rstrip("=")
-    dir_path = os.path.join("narration", unique_id)
-    os.makedirs(dir_path, exist_ok=True)
+    # Save the audio file to the directory
     file_path = os.path.join(dir_path, "audio.wav")
 
     with open(file_path, "wb") as f:
@@ -113,17 +110,30 @@ def _main():
     # path to your image
     image_path = os.path.join(os.getcwd(), "./frames/frame.jpg")
 
+    dir_path = None
+    if not isStreaming:
+        # create a unique directory to store the audio and image
+        unique_id = base64.urlsafe_b64encode(os.urandom(30)).decode("utf-8").rstrip("=")
+        dir_path = os.path.join("narration", unique_id)
+        os.makedirs(dir_path, exist_ok=True)
+
+        # copy the image to the directory
+        new_image_path = os.path.join(dir_path, "image.jpg")
+        shutil.copy(image_path, new_image_path)
+        image_path = new_image_path
+
     # getting the base64 encoding
     base64_image = encode_image(image_path)
 
-    # analyze posture
+    # analyze the image
     print(f"👀 {narrator} is watching...")
     analysis = analyze_image(base64_image, script=script)
 
-    print("🎙️ David says:")
+    print(f"🎙️ {narrator} says:")
     print(analysis)
 
-    play_audio(analysis)
+    # generate and play audio
+    play_audio(analysis, dir_path)
 
     script = script + [{"role": "assistant", "content": analysis}]
 
