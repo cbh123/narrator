@@ -23,6 +23,7 @@ Make a [Replicate](https://replicate.com), [OpenAI](https://beta.openai.com/), a
 ```
 export OPENAI_API_KEY=<token>
 export ELEVENLABS_API_KEY=<eleven-token>
+export GEMINI_API_KEY=<Gemini-api-key>
 ```
 
 Make a new voice in Eleven and get the voice id of that voice using their [get voices](https://elevenlabs.io/docs/api-reference/voices) API, or by clicking the flask icon next to the voice in the VoiceLab tab.
@@ -42,4 +43,5 @@ In another terminal, run the narrator:
 ```bash
 python narrator.py
 ```
+choose the model by selecting between 1 or 2.
 
