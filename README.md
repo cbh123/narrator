@@ -44,6 +44,6 @@ In another terminal, run the narrator:
 python narrator.py
 ```
 Default model is GPT-4. To use Gemini Pro Vision:
-```
+```bash
 python narrator.py -m gemini
 ```
