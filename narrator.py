@@ -8,11 +8,11 @@ import errno
 from elevenlabs import generate, play, set_api_key, voices
 import google.generativeai as genai
 import PIL.Image
-
+import argparse
 
 
 client = OpenAI()
-genai.configure(api_key = os.environ.get("GEMINI_API_KEY"))
+
 
 set_api_key(os.environ.get("ELEVENLABS_API_KEY"))
 
@@ -79,11 +79,12 @@ def analyze_image(base64_image, script):
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Image narration script with model selection.")
+    parser.add_argument("-m", "--model", choices=["gpt-4", "gemini"], default="gpt-4", help="Select the AI model (default: gpt-4)")
+    args = parser.parse_args()
     script = []
 
-    model = input("Which model would you like to use? 1. GPT-4 Vision 2. Gemini Pro Vision \n")
-    
-    if model == "1":
+    if args.model.lower() == "gpt-4":
         print("using GPT-4 Vision")
         print("👀 David is watching...")
 
@@ -107,7 +108,8 @@ def main():
             # wait for 5 seconds
             time.sleep(5)
             
-    elif model == "2":
+    elif args.model.lower() == "gemini":
+        genai.configure(api_key = os.environ.get("GEMINI_API_KEY"))
         print("using Gemini Pro Vision")
         print("👀 David is watching...")
 
@@ -137,7 +139,7 @@ def main():
             time.sleep(5)
 
     else:
-        print("Please enter a valid model number")
+        print("Please enter a valid argument")
 
 
 if __name__ == "__main__":

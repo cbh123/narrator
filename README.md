@@ -40,8 +40,10 @@ python capture.py
 ```
 In another terminal, run the narrator:
 
-```bash
+```bash 
 python narrator.py
 ```
-choose the model by selecting between 1 or 2.
-
+Default model is GPT-4. To use Gemini Pro Vision:
+```
+python narrator.py -m gemini
+```
