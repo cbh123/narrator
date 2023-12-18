@@ -23,6 +23,7 @@ Make a [Replicate](https://replicate.com), [OpenAI](https://beta.openai.com/), a
 ```
 export OPENAI_API_KEY=<token>
 export ELEVENLABS_API_KEY=<eleven-token>
+export GEMINI_API_KEY=<Gemini-api-key>
 ```
 
 Make a new voice in Eleven and get the voice id of that voice using their [get voices](https://elevenlabs.io/docs/api-reference/voices) API, or by clicking the flask icon next to the voice in the VoiceLab tab.
@@ -39,7 +40,10 @@ python capture.py
 ```
 In another terminal, run the narrator:
 
-```bash
+```bash 
 python narrator.py
 ```
-
+Default model is GPT-4. To use Gemini Pro Vision:
+```bash
+python narrator.py -m gemini
+```
