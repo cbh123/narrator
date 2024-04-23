@@ -5,11 +5,14 @@ import json
 import time
 import simpleaudio as sa
 import errno
-from elevenlabs import generate, play, set_api_key, voices
+from elevenlabs import play, Voice
+from elevenlabs.client import ElevenLabs
 
-client = OpenAI()
+clientEL = ElevenLabs(
+  api_key=os.environ.get("ELEVENLABS_API_KEY") # Defaults to ELEVEN_API_KEY
+)
 
-set_api_key(os.environ.get("ELEVENLABS_API_KEY"))
+clientOA = OpenAI()
 
 def encode_image(image_path):
     while True:
@@ -25,15 +28,22 @@ def encode_image(image_path):
 
 
 def play_audio(text):
-    audio = generate(text, voice=os.environ.get("ELEVENLABS_VOICE_ID"))
+    audio = clientEL.generate(
+        text=text, 
+        voice=Voice(
+            voice_id=os.environ.get("ELEVENLABS_VOICE_ID")
+        )
+    )
 
     unique_id = base64.urlsafe_b64encode(os.urandom(30)).decode("utf-8").rstrip("=")
     dir_path = os.path.join("narration", unique_id)
     os.makedirs(dir_path, exist_ok=True)
     file_path = os.path.join(dir_path, "audio.wav")
 
+    # Convert to bytes
+    audio_bytes = b''.join(audio)
     with open(file_path, "wb") as f:
-        f.write(audio)
+        f.write(audio_bytes)
 
     play(audio)
 
@@ -54,7 +64,7 @@ def generate_new_line(base64_image):
 
 
 def analyze_image(base64_image, script):
-    response = client.chat.completions.create(
+    response = clientOA.chat.completions.create(
         model="gpt-4-vision-preview",
         messages=[
             {
