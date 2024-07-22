@@ -3,3 +3,6 @@
 /narration
 /frames/*
 !/frames/.gitkeep
+
+# DS_STORE
+.DS_Store
