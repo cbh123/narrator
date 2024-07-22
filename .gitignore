@@ -4,5 +4,5 @@
 /frames/*
 !/frames/.gitkeep
 
-# DS_STORE
+# Mac-OS specific
 .DS_Store
