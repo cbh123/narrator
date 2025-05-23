@@ -26,8 +26,9 @@ prompt-toolkit==3.0.51
 ptyprocess==0.7.0
 pure-eval==0.2.3
 pydantic==2.11.5
-pydantic_core==2.34.1
+pydantic_core==2.33.2
 Pygments==2.19.1
+python-dotenv==1.0.0
 requests==2.32.3
 simpleaudio==1.0.4
 six==1.17.0

@@ -1,13 +1,21 @@
 import os
+from dotenv import load_dotenv
 from openai import OpenAI
 import base64
 import json
 import time
 import simpleaudio as sa
 import errno
-from elevenlabs import generate, play, voices
+from elevenlabs.client import ElevenLabs
+from elevenlabs import play
+
+# Load environment variables from .env file
+load_dotenv()
 
 client = OpenAI()
+elevenlabs_client = ElevenLabs(
+    api_key=os.environ.get("ELEVENLABS_API_KEY")
+)
 
 
 def encode_image(image_path, retries=3, delay=0.1):
@@ -32,8 +40,12 @@ def encode_image(image_path, retries=3, delay=0.1):
 def play_audio(text):
     try:
         voice_id = os.environ.get("ELEVEN_VOICE_ID", "21m00Tcm4TlvDq8ikWAM")
-        # audio = generate(text=text, voice="ENfvYmv6CRqDodDZTieQ", model="eleven_turbo_v2")
-        audio = generate(text=text, voice=voice_id, model="eleven_turbo_v2")
+        # Generate audio using the new ElevenLabs client API
+        audio = elevenlabs_client.generate(
+            text=text,
+            voice=voice_id,
+            model="eleven_turbo_v2"
+        )
     except Exception as e: # Replace with specific ElevenLabs APIError if available
         print(f"Error generating audio with ElevenLabs: {e}")
         return
@@ -62,7 +74,9 @@ def generate_new_line(base64_image):
                 {"type": "text", "text": "Describe this image"},
                 {
                     "type": "image_url",
-                    "image_url": f"data:image/jpeg;base64,{base64_image}",
+                    "image_url": {
+                        "url": f"data:image/jpeg;base64,{base64_image}"
+                    },
                 },
             ],
         },
@@ -91,18 +105,22 @@ def analyze_image(base64_image, script):
     )
         response_text = response.choices[0].message.content
         return response_text
-    except client.APIConnectionError as e:
-        print(f"OpenAI API Connection Error: {e}")
-        return "Error: Could not connect to OpenAI API."
-    except client.RateLimitError as e:
-        print(f"OpenAI API Rate Limit Error: {e}")
-        return "Error: OpenAI API rate limit exceeded."
-    except client.APIStatusError as e:
-        print(f"OpenAI API Status Error: {e}")
-        return f"Error: OpenAI API returned an error status {e.status_code}."
     except Exception as e:
-        print(f"An unexpected error occurred during OpenAI API call: {e}")
-        return "Error: An unexpected error occurred during image analysis."
+        if "APIConnectionError" in str(type(e)):
+            print(f"OpenAI API Connection Error: {e}")
+            return "Error: Could not connect to OpenAI API."
+        elif "RateLimitError" in str(type(e)):
+            print(f"OpenAI API Rate Limit Error: {e}")
+            return "Error: OpenAI API rate limit exceeded."
+        elif "AuthenticationError" in str(type(e)):
+            print(f"OpenAI API Authentication Error: {e}")
+            return "Error: Invalid OpenAI API key. Please check your .env file."
+        elif "APIStatusError" in str(type(e)):
+            print(f"OpenAI API Status Error: {e}")
+            return f"Error: OpenAI API returned an error status."
+        else:
+            print(f"An unexpected error occurred during OpenAI API call: {e}")
+            return "Error: An unexpected error occurred during image analysis."
 
 
 def main():
