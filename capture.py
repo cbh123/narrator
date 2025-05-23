@@ -21,6 +21,8 @@ if not cap.isOpened():
 # Wait for the camera to initialize and adjust light levels
 time.sleep(2)
 
+print("📸 Starting image capture... Say cheese!")
+
 while True:
     ret, frame = cap.read()
     if ret:
@@ -37,9 +39,19 @@ while True:
         frame = cv2.cvtColor(np.array(resized_img), cv2.COLOR_RGB2BGR)
 
         # Save the frame as an image file
-        print("📸 Say cheese! Saving frame.")
-        path = f"{folder}/frame.jpg"
-        cv2.imwrite(path, frame)
+        tmp_path = os.path.join(frames_dir, "frame.tmp.jpg")
+        final_path = os.path.join(frames_dir, "frame.jpg")
+        
+        try:
+            cv2.imwrite(tmp_path, frame)
+            os.rename(tmp_path, final_path)
+        except cv2.error as e:
+            print(f"OpenCV error: Failed to write image: {e}")
+        except OSError as e:
+            print(f"OS error: Failed to rename image: {e}")
+        except Exception as e:
+            print(f"An unexpected error occurred during file operation: {e}")
+            
     else:
         print("Failed to capture image")
 

@@ -10,33 +10,48 @@ from elevenlabs import generate, play, voices
 client = OpenAI()
 
 
-def encode_image(image_path):
-    while True:
+def encode_image(image_path, retries=3, delay=0.1):
+    for attempt in range(retries):
         try:
             with open(image_path, "rb") as image_file:
                 return base64.b64encode(image_file.read()).decode("utf-8")
+        except FileNotFoundError:
+            print(f"Error: Image file not found at {image_path}. Retrying...")
+            time.sleep(delay)
         except IOError as e:
-            if e.errno != errno.EACCES:
-                # Not a "file in use" error, re-raise
-                raise
-            # File is being written to, wait a bit and retry
-            time.sleep(0.1)
+            # Handles other I/O errors, including permission errors if they still occur
+            print(f"IOError when trying to read {image_path}: {e}. Retrying...")
+            time.sleep(delay)
+        except Exception as e:
+            print(f"An unexpected error occurred while encoding image {image_path}: {e}")
+            return None # Or raise, depending on desired behavior for unexpected errors
+    print(f"Failed to encode image {image_path} after {retries} retries.")
+    return None
 
 
 def play_audio(text):
-    #audio = generate(text=text, voice="ENfvYmv6CRqDodDZTieQ", model="eleven_turbo_v2")
-    audio = generate(text=text, voice="21m00Tcm4TlvDq8ikWAM", model="eleven_turbo_v2")
+    try:
+        voice_id = os.environ.get("ELEVEN_VOICE_ID", "21m00Tcm4TlvDq8ikWAM")
+        # audio = generate(text=text, voice="ENfvYmv6CRqDodDZTieQ", model="eleven_turbo_v2")
+        audio = generate(text=text, voice=voice_id, model="eleven_turbo_v2")
+    except Exception as e: # Replace with specific ElevenLabs APIError if available
+        print(f"Error generating audio with ElevenLabs: {e}")
+        return
 
+    try:
+        unique_id = base64.urlsafe_b64encode(os.urandom(30)).decode("utf-8").rstrip("=")
+        dir_path = os.path.join("narration", unique_id)
+        os.makedirs(dir_path, exist_ok=True)
+        file_path = os.path.join(dir_path, "audio.wav")
 
-    unique_id = base64.urlsafe_b64encode(os.urandom(30)).decode("utf-8").rstrip("=")
-    dir_path = os.path.join("narration", unique_id)
-    os.makedirs(dir_path, exist_ok=True)
-    file_path = os.path.join(dir_path, "audio.wav")
-
-    with open(file_path, "wb") as f:
-        f.write(audio)
-
-    play(audio)
+        with open(file_path, "wb") as f:
+            f.write(audio)
+        
+        play(audio) # Assuming play() is blocking; if not, ensure file is written before next step
+    except IOError as e:
+        print(f"IOError saving or playing audio file: {e}")
+    except Exception as e:
+        print(f"An unexpected error occurred during audio playback: {e}")
 
 
 def generate_new_line(base64_image):
@@ -55,14 +70,16 @@ def generate_new_line(base64_image):
 
 
 def analyze_image(base64_image, script):
-    response = client.chat.completions.create(
-        model="gpt-4-vision-preview",
-        messages=[
+    if not base64_image:
+        return "Error: Could not encode image for analysis."
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4-turbo",
+            messages=[
             {
                 "role": "system",
                 "content": """
-                You are a teenager. Narrate the picture as a teenager.
-                Make it snarky and funny. Don't repeat yourself. Make it short. If I do anything remotely interesting, make a big deal about it!
+                Narrate the picture in the style of a nature documentary. Be observational, insightful, and use vivid language. Maintain a respectful and engaging tone. Keep it concise. If anything interesting or unusual is observed, highlight it with a sense of wonder or intrigue.
                 Also do not exceed 300 characters.
                 take a deep breath and do this step by step.
                 """,
@@ -72,8 +89,20 @@ def analyze_image(base64_image, script):
         + generate_new_line(base64_image),
         max_tokens=500,
     )
-    response_text = response.choices[0].message.content
-    return response_text
+        response_text = response.choices[0].message.content
+        return response_text
+    except client.APIConnectionError as e:
+        print(f"OpenAI API Connection Error: {e}")
+        return "Error: Could not connect to OpenAI API."
+    except client.RateLimitError as e:
+        print(f"OpenAI API Rate Limit Error: {e}")
+        return "Error: OpenAI API rate limit exceeded."
+    except client.APIStatusError as e:
+        print(f"OpenAI API Status Error: {e}")
+        return f"Error: OpenAI API returned an error status {e.status_code}."
+    except Exception as e:
+        print(f"An unexpected error occurred during OpenAI API call: {e}")
+        return "Error: An unexpected error occurred during image analysis."
 
 
 def main():
@@ -86,16 +115,20 @@ def main():
         # getting the base64 encoding
         base64_image = encode_image(image_path)
 
-        # analyze posture
-        print("👀 David is watching...")
-        analysis = analyze_image(base64_image, script=script)
+        if base64_image:
+            # analyze posture
+            print("👀 David is watching...")
+            analysis = analyze_image(base64_image, script=script)
 
-        print("🎙️ David says:")
-        print(analysis)
-
-        play_audio(analysis)
-
-        script = script + [{"role": "assistant", "content": analysis}]
+            if analysis and not analysis.startswith("Error:") : # Check if analysis produced valid output
+                print("🎙️ David says:")
+                print(analysis)
+                play_audio(analysis)
+                script = script + [{"role": "assistant", "content": analysis}]
+            else:
+                print(analysis) # Print error message from analyze_image or if it's None
+        else:
+            print("Skipping analysis due to image encoding failure.")
 
         # wait for 5 seconds
         time.sleep(5)
