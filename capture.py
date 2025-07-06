@@ -4,6 +4,8 @@ from PIL import Image
 import numpy as np
 import os
 
+# Hello world
+
 # Folder
 folder = "frames"
 
