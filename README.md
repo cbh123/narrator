@@ -43,3 +43,6 @@ In another terminal, run the narrator:
 python narrator.py
 ```
 
+goodbye
+
+
