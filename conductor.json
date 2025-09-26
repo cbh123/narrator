@@ -1,6 +1,0 @@
-{
-  "scripts": {
-    "setup": "echo \"hello\"\n",
-    "run": "echo \"hello\"\n"
-  }
-}
