@@ -3,3 +3,6 @@
 /narration
 /frames/*
 !/frames/.gitkeep
+
+# Mac-OS specific
+.DS_Store
