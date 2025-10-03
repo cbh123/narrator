@@ -6,8 +6,13 @@ import time
 import simpleaudio as sa
 import errno
 from elevenlabs import generate, play, set_api_key, voices
+import google.generativeai as genai
+import PIL.Image
+import argparse
+
 
 client = OpenAI()
+
 
 set_api_key(os.environ.get("ELEVENLABS_API_KEY"))
 
@@ -74,28 +79,67 @@ def analyze_image(base64_image, script):
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Image narration script with model selection.")
+    parser.add_argument("-m", "--model", choices=["gpt-4", "gemini"], default="gpt-4", help="Select the AI model (default: gpt-4)")
+    args = parser.parse_args()
     script = []
 
-    while True:
-        # path to your image
-        image_path = os.path.join(os.getcwd(), "./frames/frame.jpg")
-
-        # getting the base64 encoding
-        base64_image = encode_image(image_path)
-
-        # analyze posture
+    if args.model.lower() == "gpt-4":
+        print("using GPT-4 Vision")
         print("👀 David is watching...")
-        analysis = analyze_image(base64_image, script=script)
 
-        print("🎙️ David says:")
-        print(analysis)
+        while True:
+            # path to your image
+            image_path = os.path.join(os.getcwd(), "./frames/frame.jpg")
 
-        play_audio(analysis)
 
-        script = script + [{"role": "assistant", "content": analysis}]
+            # getting the base64 encoding
+            base64_image = encode_image(image_path)
+            analysis = analyze_image(base64_image, script=script)
 
-        # wait for 5 seconds
-        time.sleep(5)
+
+            print("🎙️ David says:")
+            print(analysis)
+
+            play_audio(analysis)
+
+            script = script + [{"role": "assistant", "content": analysis}]
+
+            # wait for 5 seconds
+            time.sleep(5)
+            
+    elif args.model.lower() == "gemini":
+        genai.configure(api_key = os.environ.get("GEMINI_API_KEY"))
+        print("using Gemini Pro Vision")
+        print("👀 David is watching...")
+
+        while True:
+            # path to your image
+            image_path = os.path.join(os.getcwd(), "./frames/frame.jpg")
+
+            img = PIL.Image.open(image_path)
+            
+            model = genai.GenerativeModel('gemini-pro-vision')
+            response = model.generate_content(["""
+                You are Sir David Attenborough. Narrate the picture of the human as if it is a nature documentary.
+                Make it snarky and funny. Don't repeat yourself. Make it short. If I do anything remotely interesting, make a big deal about it!
+                """+"refer to these previous narrations".join(script), img])
+
+            response_text = response.text
+
+
+            print("🎙️ David says:")
+            print(response_text)
+
+            play_audio(response_text)
+
+            script = script + [response_text]
+
+            # wait for 5 seconds
+            time.sleep(5)
+
+    else:
+        print("Please enter a valid argument")
 
 
 if __name__ == "__main__":
