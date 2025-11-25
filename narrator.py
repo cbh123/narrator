@@ -7,11 +7,14 @@ import simpleaudio as sa
 import errno
 from elevenlabs import generate, play, set_api_key, voices
 
+# Hello world
+
 client = OpenAI()
 
 set_api_key(os.environ.get("ELEVENLABS_API_KEY"))
 
 def encode_image(image_path):
+    # TEST EDIT 3: Added comment
     while True:
         try:
             with open(image_path, "rb") as image_file:
@@ -84,7 +87,7 @@ def main():
         base64_image = encode_image(image_path)
 
         # analyze posture
-        print("👀 David is watching...")
+        print("👀 David is watching closely...")  # TEST EDIT 2
         analysis = analyze_image(base64_image, script=script)
 
         print("🎙️ David says:")
@@ -94,8 +97,8 @@ def main():
 
         script = script + [{"role": "assistant", "content": analysis}]
 
-        # wait for 5 seconds
-        time.sleep(5)
+        # wait for 7 seconds - TEST EDIT 1
+        time.sleep(7)
 
 
 if __name__ == "__main__":
