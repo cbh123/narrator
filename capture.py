@@ -1,8 +1,9 @@
-import cv2
-import time
-from PIL import Image
-import numpy as np
 import os
+import time
+
+import cv2
+import numpy as np
+from PIL import Image
 
 # Folder
 folder = "frames"
@@ -30,7 +31,7 @@ while True:
         # Resize the image
         max_size = 250
         ratio = max_size / max(pil_img.size)
-        new_size = tuple([int(x*ratio) for x in pil_img.size])
+        new_size = tuple([int(x * ratio) for x in pil_img.size])
         resized_img = pil_img.resize(new_size, Image.LANCZOS)
 
         # Convert the PIL image back to an OpenCV image
