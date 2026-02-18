@@ -43,7 +43,7 @@ def generate_new_line(base64_image):
         {
             "role": "user",
             "content": [
-                {"type": "text", "text": "Describe this image"},
+                {"type": "text", "text": "Describe this image as if you are David Attenborough"},
                 {
                     "type": "image_url",
                     "image_url": f"data:image/jpeg;base64,{base64_image}",
