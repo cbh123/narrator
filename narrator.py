@@ -14,8 +14,8 @@ client = OpenAI(
     api_key=os.environ.get("OPENAI_API_KEY", "local-model"),  # Any string works for local servers
 )
 
-# Local TTS server (default: http://127.0.0.1:7860)
-TTS_URL = os.environ.get("TTS_URL", "http://127.0.0.1:7860")
+# Local Piper TTS server (default: http://127.0.0.1:5001)
+TTS_URL = os.environ.get("TTS_URL", "http://127.0.0.1:5001")
 
 def encode_image(image_path):
     while True:
@@ -31,56 +31,37 @@ def encode_image(image_path):
 
 
 def play_audio(text):
-    voice = os.environ.get("TTS_VOICE", "David2")
+    voice = os.environ.get("TTS_VOICE", "en_GB-alan-medium")
 
-    # Get available voices from the TTS server
+    # Get available voices from the Piper server (returns a dict, not a list)
+    target_voice = None
     try:
-        voices_resp = requests.get(f"{TTS_URL}/api/voices")
+        voices_resp = requests.get(f"{TTS_URL}/voices")
         voices_resp.raise_for_status()
         all_voices = voices_resp.json()
 
-        # Find the voice name matching our desired voice
-        target_voice = None
-        for v in all_voices:
-            if v.get("name") == voice:
-                target_voice = v["name"]
-                break
-
-        # If we didn't find an exact match, try the first voice as fallback
-        if target_voice is None and all_voices:
-            print(f"⚠️ Voice '{voice}' not found, using first available voice: {all_voices[0].get('name', 'unknown')}")
-            target_voice = all_voices[0]["name"]
+        # Piper returns a dict like {"en_GB-alan-medium": {...}, ...}
+        if voice in all_voices:
+            target_voice = voice
+        elif all_voices:
+            first_voice = list(all_voices.keys())[0]
+            print(f"⚠️ Voice '{voice}' not found, using first available voice: {first_voice}")
+            target_voice = first_voice
 
         if not all_voices:
-            print("⚠️ No voices returned from TTS server, proceeding without voice selection")
+            print("⚠️ No voices returned from Piper server, proceeding without voice selection")
 
     except Exception as e:
-        print(f"⚠️ Could not fetch voices from TTS server: {e}")
-        target_voice = None
+        print(f"⚠️ Could not fetch voices from Piper server: {e}")
 
-    # Generate audio via the /api/generate endpoint (POST with JSON body)
+    # Piper's /synthesize endpoint returns raw WAV bytes directly (not a URL)
     payload = {"text": text}
     if target_voice:
         payload["voice"] = target_voice
 
-    print(f"🔊 Calling TTS: {TTS_URL}/api/generate (voice={target_voice or 'default'})")
-    response = requests.post(f"{TTS_URL}/api/generate", json=payload)
-    print(f"🔊 TTS status: {response.status_code}")
-
-    # The /api/generate endpoint returns JSON with a 'url' field pointing to the audio file
-    if response.headers.get("content-type", "").startswith("application/json"):
-        result = response.json()
-        audio_url = result.get("url")
-        # The URL may be relative (e.g., "/clips/..."), prepend the TTS base URL
-        if audio_url and not audio_url.startswith("http"):
-            audio_url = f"{TTS_URL}{audio_url}"
-        if not audio_url:
-            raise RuntimeError(f"TTS generation failed: {result.get('error', 'unknown error')}")
-        print(f"🔊 Downloading audio from: {audio_url}")
-        response = requests.get(audio_url)
-        response.raise_for_status()
-
-    print(f"🔊 TTS status: {response.status_code}")
+    print(f"🔊 Calling Piper TTS: {TTS_URL}/synthesize (voice={target_voice or 'default'})")
+    response = requests.post(f"{TTS_URL}/synthesize", json=payload)
+    print(f"🔊 Piper TTS status: {response.status_code}")
     response.raise_for_status()
 
     unique_id = base64.urlsafe_b64encode(os.urandom(30)).decode("utf-8").rstrip("=")
@@ -91,10 +72,9 @@ def play_audio(text):
     with open(file_path, "wb") as f:
         f.write(response.content)
 
-    # Play the audio file using afplay (macOS) or a fallback
+    # Play the audio file using afplay (macOS)
     import subprocess
 
-    # Save the audio to disk first, then play it with afplay
     subprocess.run(["afplay", file_path], check=True)
 
 
@@ -153,7 +133,20 @@ def main():
 
         play_audio(analysis)
 
-        script = script + [{"role": "assistant", "content": analysis}]
+        # Save both the user message and assistant response to build full conversation history
+        script = script + [
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": "Describe this image"},
+                    {
+                        "type": "image_url",
+                        "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"},
+                    },
+                ],
+            },
+            {"role": "assistant", "content": analysis},
+        ]
 
         # wait for 5 seconds
         time.sleep(5)
