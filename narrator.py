@@ -1,15 +1,21 @@
 import os
 from openai import OpenAI
 import base64
-import json
+
 import time
-import simpleaudio as sa
 import errno
-from elevenlabs import generate, play, set_api_key, voices
+import requests
 
-client = OpenAI()
+# Local LM Studio server (default: http://localhost:1234/v1)
+# Set OPENAI_BASE_URL env var to override, or edit this line directly.
+# For MLX LM server: http://localhost:8080/v1
+client = OpenAI(
+    base_url=os.environ.get("OPENAI_BASE_URL", "http://localhost:1234/v1"),
+    api_key=os.environ.get("OPENAI_API_KEY", "local-model"),  # Any string works for local servers
+)
 
-set_api_key(os.environ.get("ELEVENLABS_API_KEY"))
+# Local TTS server (default: http://127.0.0.1:7860)
+TTS_URL = os.environ.get("TTS_URL", "http://127.0.0.1:7860")
 
 def encode_image(image_path):
     while True:
@@ -25,7 +31,57 @@ def encode_image(image_path):
 
 
 def play_audio(text):
-    audio = generate(text, voice=os.environ.get("ELEVENLABS_VOICE_ID"))
+    voice = os.environ.get("TTS_VOICE", "David2")
+
+    # Get available voices from the TTS server
+    try:
+        voices_resp = requests.get(f"{TTS_URL}/api/voices")
+        voices_resp.raise_for_status()
+        all_voices = voices_resp.json()
+
+        # Find the voice name matching our desired voice
+        target_voice = None
+        for v in all_voices:
+            if v.get("name") == voice:
+                target_voice = v["name"]
+                break
+
+        # If we didn't find an exact match, try the first voice as fallback
+        if target_voice is None and all_voices:
+            print(f"⚠️ Voice '{voice}' not found, using first available voice: {all_voices[0].get('name', 'unknown')}")
+            target_voice = all_voices[0]["name"]
+
+        if not all_voices:
+            print("⚠️ No voices returned from TTS server, proceeding without voice selection")
+
+    except Exception as e:
+        print(f"⚠️ Could not fetch voices from TTS server: {e}")
+        target_voice = None
+
+    # Generate audio via the /api/generate endpoint (POST with JSON body)
+    payload = {"text": text}
+    if target_voice:
+        payload["voice"] = target_voice
+
+    print(f"🔊 Calling TTS: {TTS_URL}/api/generate (voice={target_voice or 'default'})")
+    response = requests.post(f"{TTS_URL}/api/generate", json=payload)
+    print(f"🔊 TTS status: {response.status_code}")
+
+    # The /api/generate endpoint returns JSON with a 'url' field pointing to the audio file
+    if response.headers.get("content-type", "").startswith("application/json"):
+        result = response.json()
+        audio_url = result.get("url")
+        # The URL may be relative (e.g., "/clips/..."), prepend the TTS base URL
+        if audio_url and not audio_url.startswith("http"):
+            audio_url = f"{TTS_URL}{audio_url}"
+        if not audio_url:
+            raise RuntimeError(f"TTS generation failed: {result.get('error', 'unknown error')}")
+        print(f"🔊 Downloading audio from: {audio_url}")
+        response = requests.get(audio_url)
+        response.raise_for_status()
+
+    print(f"🔊 TTS status: {response.status_code}")
+    response.raise_for_status()
 
     unique_id = base64.urlsafe_b64encode(os.urandom(30)).decode("utf-8").rstrip("=")
     dir_path = os.path.join("narration", unique_id)
@@ -33,9 +89,13 @@ def play_audio(text):
     file_path = os.path.join(dir_path, "audio.wav")
 
     with open(file_path, "wb") as f:
-        f.write(audio)
+        f.write(response.content)
 
-    play(audio)
+    # Play the audio file using afplay (macOS) or a fallback
+    import subprocess
+
+    # Save the audio to disk first, then play it with afplay
+    subprocess.run(["afplay", file_path], check=True)
 
 
 def generate_new_line(base64_image):
@@ -46,7 +106,7 @@ def generate_new_line(base64_image):
                 {"type": "text", "text": "Describe this image"},
                 {
                     "type": "image_url",
-                    "image_url": f"data:image/jpeg;base64,{base64_image}",
+                    "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"},
                 },
             ],
         },
@@ -55,7 +115,8 @@ def generate_new_line(base64_image):
 
 def analyze_image(base64_image, script):
     response = client.chat.completions.create(
-        model="gpt-4-vision-preview",
+        # Use the exact model name from LM Studio (e.g., "qwen3-vl-8b-instruct")
+        model=os.environ.get("LOCAL_MODEL_NAME", "qwen3-vl-8b-instruct"),
         messages=[
             {
                 "role": "system",

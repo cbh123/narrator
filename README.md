@@ -18,6 +18,23 @@ source venv/bin/activate
 Then, install the dependencies:
 `pip install -r requirements.txt`
 
+### Using a Local Model (LM Studio)
+
+To run with a local LM Studio model (e.g., Qwen3-VL), set these environment variables:
+
+```bash
+# Point to your LM Studio local server (default port is 1234)
+export OPENAI_BASE_URL=http://localhost:1234/v1
+
+# Set your local model name (use the exact name from LM Studio)
+export LOCAL_MODEL_NAME=qwen3-vl-8b-instruct
+
+# API key can be any string for local servers
+export OPENAI_API_KEY=local-model
+```
+
+### Using the Cloud API (Replicate / OpenAI)
+
 Make a [Replicate](https://replicate.com), [OpenAI](https://beta.openai.com/), and [ElevenLabs](https://elevenlabs.io) account and set your tokens:
 
 ```
@@ -33,7 +50,7 @@ export ELEVENLABS_VOICE_ID=<voice-id>
 
 ## Run it!
 
-In on terminal, run the webcam capture:
+In one terminal, run the webcam capture:
 ```bash
 python capture.py
 ```
@@ -42,4 +59,3 @@ In another terminal, run the narrator:
 ```bash
 python narrator.py
 ```
-
