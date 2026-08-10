@@ -31,6 +31,10 @@ def encode_image(image_path):
 
 
 def play_audio(text):
+    if not text.strip():
+        print("⚠️ Empty text passed to play_audio, skipping")
+        return
+
     voice = os.environ.get("TTS_VOICE", "en_GB-alan-medium")
 
     # Get available voices from the Piper server (returns a dict, not a list)
@@ -131,7 +135,10 @@ def main():
         print("🎙️ David says:")
         print(analysis)
 
-        play_audio(analysis)
+        if not analysis.strip():
+            print("⚠️ LLM returned empty text, skipping TTS")
+        else:
+            play_audio(analysis)
 
         # Save both the user message and assistant response to build full conversation history
         script = script + [
